@@ -1,36 +1,43 @@
 #include <windows.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <stdio.h>
+#include <stdbool.h>
 
-#include "game_functions.h"
+#include "game.h"
 
-static char user_input[256];
+void iterate_object_manager() {
+    DWORD object_manager = 0x00B41414;
+    DWORD first_obj_ptr = 0xac;
+    DWORD next_obj_ptr = 0x3c;
+    DWORD obj_type = 0x14;
+    DWORD descriptorOffset = 0x8;
 
-bool get_user_input() {
-    printf("\n>>>");
-    bool input_successful = fgets(user_input, sizeof(user_input), stdin);
-    user_input[strcspn(user_input, "\n")] = 0;
-    return input_successful;
-}
+    DWORD cur_obj = *(DWORD*)(*(DWORD*)object_manager + first_obj_ptr);
+    DWORD obj_typeh = *(DWORD*)(cur_obj+obj_type);
 
-bool execute_user_input() {
-    if (!strcmp("login", user_input)) {
-        printf("Player is logged in: %d\n", get_player_guid() > 0);
-    } else if (!strcmp("exit", user_input)) {
-        return false;
+    while (cur_obj != 0) {
+        if (*(DWORD*)(cur_obj+obj_type) == 4) {
+            printf("Player found.\n\n");
+        }
+        printf("0x%x type: %d\n", cur_obj, obj_typeh);
+
+        cur_obj = *(DWORD*)(cur_obj+next_obj_ptr);
+        obj_typeh = *(DWORD*)(cur_obj+obj_type);
+        Sleep(500);
     }
-    return true;
 }
 
-void start_bot() {
+void bot() {
     AllocConsole();
-    FILE* fDummy;
+    FILE *fDummy;
     freopen_s(&fDummy, "CONOUT$", "w", stdout);
-    freopen_s(&fDummy, "CONOUT$", "w", stderr);
-    freopen_s(&fDummy, "CONIN$", "r", stdin);
 
-    while (get_user_input() && execute_user_input());
-    exit(0);
+    printf("Injected...\n");
+
+    while (true) {
+        if(get_player_guid() > 0) {
+            iterate_object_manager();
+            break;
+        }
+        Sleep(500);
+    }
 }
