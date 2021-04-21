@@ -5,11 +5,11 @@
 #include "game.h"
 
 void iterate_object_manager() {
-    DWORD object_manager = 0x00B41414;
-    DWORD first_obj_ptr = 0xac;
-    DWORD next_obj_ptr = 0x3c;
-    DWORD obj_type = 0x14;
-    DWORD descriptorOffset = 0x8;
+    static DWORD object_manager = 0x00B41414;
+    static DWORD first_obj_ptr = 0xac;
+    static DWORD next_obj_ptr = 0x3c;
+    static DWORD obj_type = 0x14;
+    static DWORD descriptorOffset = 0x8;
 
     DWORD cur_obj = *(DWORD*)(*(DWORD*)object_manager + first_obj_ptr);
     DWORD obj_typeh = *(DWORD*)(cur_obj+obj_type);
