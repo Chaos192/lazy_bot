@@ -16,7 +16,7 @@ void bot() {
         if(GetAsyncKeyState('E')) {
             system("cls");
             if (get_player_guid() > 0) {
-                enumerate_objects();
+                enumerate_visible_objects();
             }
         }
         Sleep(100);

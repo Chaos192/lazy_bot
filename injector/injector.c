@@ -58,13 +58,13 @@ BOOL inject_dll(DWORD proc_id, LPSTR dll_path) {
 }
 
 int main() {
-	LPSTR game_path = "\"C:\\Program Files (x86)\\WoW 1.12.1\\WoW.exe\"";
-	ShellExecute(NULL, "open", game_path, NULL, NULL, SW_SHOWDEFAULT);
+    LPSTR game_path = "\"C:\\Program Files (x86)\\WoW 1.12.1\\WoW.exe\"";
+    ShellExecute(NULL, "open", game_path, NULL, NULL, SW_SHOWDEFAULT);
 
     set_debug_privileges();
 
     DWORD proc_id = get_proc_id_from_window_name("World of Warcraft");
-	LPSTR dll_path = "C:\\Users\\Felipe David\\Documents\\fun\\lazybot\\injector\\lazybot.dll";
+	LPSTR dll_path = "C:\\Users\\Felipe David\\Documents\\fun\\lazybot\\bot\\lazybot.dll";
     if (!inject_dll(proc_id, dll_path)) {
         printf("Could not inject the dll.\n"); 
         return EXIT_FAILURE;

@@ -19,7 +19,7 @@ const char *object_type_to_string(DWORD object_type) {
     return string;
 }
 
-void enumerate_objects() {
+void enumerate_visible_objects() {
     static DWORD object_manager   = 0x00B41414;
     static DWORD first_obj_ptr    = 0xac;
     static DWORD cur_obj_guid     = 0x30;
@@ -30,7 +30,7 @@ void enumerate_objects() {
     DWORD cur_obj = *(DWORD*)(*(DWORD*)object_manager + first_obj_ptr);
     DWORD next = cur_obj;
 
-    object_t objects[500];
+    wow_object_t objects[500];
     int n_objects = 0;
 
     while (cur_obj != 0 && (cur_obj & 1) == 0) {

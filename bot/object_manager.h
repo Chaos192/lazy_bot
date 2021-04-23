@@ -13,7 +13,7 @@ typedef struct {
     ULONGLONG guid;
     DWORD pointer;
     enum object_type_t object_type;
-} object_t;
+} wow_object_t;
 
 const char *object_type_to_string(DWORD object_type);
-void iterate_object_manager();
+void enumerate_visible_objects();
