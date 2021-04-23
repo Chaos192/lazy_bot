@@ -5,11 +5,13 @@
 void set_debug_privileges() {
     HANDLE token_handle;
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token_handle)) {
+        printf("Could not get process token.\n");
         return;
     }
 
     TOKEN_PRIVILEGES tp;
     if (!LookupPrivilegeValueA(NULL, "SeDebugPrivilege", &tp.Privileges[0].Luid)) {
+        printf("Could not get LUID.\n");
         return;
     }
 
@@ -17,6 +19,7 @@ void set_debug_privileges() {
     tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
     
     if (!AdjustTokenPrivileges(token_handle, false, &tp, 0, (PTOKEN_PRIVILEGES)NULL, 0)) {
+        printf("Could not change token's privileges.\n");
         return;
     }
 }
@@ -58,13 +61,13 @@ BOOL inject_dll(DWORD proc_id, LPSTR dll_path) {
 }
 
 int main() {
-    LPSTR game_path = "\"C:\\Program Files (x86)\\WoW 1.12.1\\WoW.exe\"";
+    LPSTR game_path = "\"C:\\Program Files (x86)\\World of Warcraft\\WoW.exe\"";
     ShellExecute(NULL, "open", game_path, NULL, NULL, SW_SHOWDEFAULT);
 
     set_debug_privileges();
 
     DWORD proc_id = get_proc_id_from_window_name("World of Warcraft");
-	LPSTR dll_path = "C:\\Users\\Felipe David\\Documents\\fun\\lazybot\\bot\\lazybot.dll";
+	LPSTR dll_path = "C:\\Users\\Felipe David\\fun\\lazybot\\bot\\lazybot.dll";
     if (!inject_dll(proc_id, dll_path)) {
         printf("Could not inject the dll.\n"); 
         return EXIT_FAILURE;
