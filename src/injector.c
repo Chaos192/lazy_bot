@@ -50,10 +50,15 @@ BOOL inject_dll(DWORD proc_id, LPSTR dll_path) {
 
     LPVOID load_lib_addr = (LPVOID)GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryA");
 
-    LPVOID p_dll_path = (LPVOID)VirtualAllocEx(proc_handle, NULL, strlen(dll_path)+1, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+    LPVOID p_dll_path = (LPVOID)VirtualAllocEx(
+            proc_handle, NULL, strlen(dll_path)+1, 
+            MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
     WriteProcessMemory(proc_handle, p_dll_path, dll_path, strlen(dll_path)+1, NULL);
 
-    HANDLE thread = CreateRemoteThread(proc_handle, NULL, NULL, (LPTHREAD_START_ROUTINE)load_lib_addr, (LPVOID)p_dll_path, NULL, NULL);
+    HANDLE thread = CreateRemoteThread(
+            proc_handle, 0, 0, 
+            (LPTHREAD_START_ROUTINE)load_lib_addr, 
+            (LPVOID)p_dll_path, 0, NULL);
     WaitForSingleObject(thread, INFINITE);
 
     CloseHandle(proc_handle);

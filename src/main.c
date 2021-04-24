@@ -7,7 +7,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,
                     DWORD Reason,
                     LPVOID Reserved) {
     if (Reason == DLL_PROCESS_ATTACH) {
-        CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)bot, NULL, NULL, NULL);
+        CreateThread(0, 0, (LPTHREAD_START_ROUTINE)bot, NULL, 0, NULL);
     }
     return true;
 }
