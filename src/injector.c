@@ -25,7 +25,7 @@ void set_debug_privileges() {
 }
 
 DWORD get_proc_id_from_window_name(LPSTR window_name) {
-    printf("Waiting for window...");
+    printf("Waiting for window...\n");
     HWND window_handle = NULL;
     while (!(window_handle = FindWindow(NULL, window_name))) Sleep(100);
 
