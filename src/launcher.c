@@ -10,8 +10,8 @@ void setup_windows_layout() {
                 "C:\\Program Files (x86)\\World of Warcraft\\WoW.exe");
     } while (!bot_logs_handle);
 
-    SetWindowPos(bot_logs_handle, HWND_TOP, 775, 0, 1366-765, 750, NULL);
-    SetWindowPos(wow_window_handle, HWND_TOP, -10, 0, 800, 600, NULL);
+    SetWindowPos(bot_logs_handle, HWND_TOP, 775, 0, 1366-765, 750, 0);
+    SetWindowPos(wow_window_handle, HWND_TOP, -10, 0, 800, 600, 0);
 
     SetForegroundWindow(wow_window_handle);
 }
@@ -45,6 +45,9 @@ DWORD get_proc_id_from_window_name(LPSTR window_name) {
 
     DWORD proc_id;
     GetWindowThreadProcessId(window_handle, &proc_id);
+    if (!proc_id) {
+        printf("Could not get process id.\n");
+    }
 
     return proc_id;
 }
@@ -88,7 +91,7 @@ int main() {
     set_debug_privileges();
 
     DWORD proc_id = get_proc_id_from_window_name("World of Warcraft");
-    LPSTR dll_path = "C:\\Users\\Felipe David\\fun\\lazybot\\bin\\lazybot.dll";
+    LPSTR dll_path = "C:\\Users\\Felipe David\\fun\\kenny_bot\\bin\\kenny_bot.dll";
     if (!inject_dll(proc_id, dll_path)) {
         printf("Could not inject the dll.\n"); 
         return EXIT_FAILURE;

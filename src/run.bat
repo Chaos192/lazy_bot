@@ -1,2 +1,2 @@
 @echo off
-..\bin\injector.exe
+..\bin\launcher.exe
