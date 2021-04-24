@@ -3,3 +3,4 @@
 *.swp
 *.exe
 .vs/
+bin/

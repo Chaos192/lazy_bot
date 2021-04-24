@@ -2,6 +2,20 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+void setup_windows_layout() {
+    HWND wow_window_handle = FindWindow(NULL, "World of Warcraft"); 
+    HWND bot_logs_handle; 
+    do {
+        bot_logs_handle = FindWindow(NULL, 
+                "C:\\Program Files (x86)\\World of Warcraft\\WoW.exe");
+    } while (!bot_logs_handle);
+
+    SetWindowPos(bot_logs_handle, HWND_TOP, 775, 0, 1366-765, 750, NULL);
+    SetWindowPos(wow_window_handle, HWND_TOP, -10, 0, 800, 600, NULL);
+
+    SetForegroundWindow(wow_window_handle);
+}
+
 void set_debug_privileges() {
     HANDLE token_handle;
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token_handle)) {
@@ -48,12 +62,14 @@ BOOL inject_dll(DWORD proc_id, LPSTR dll_path) {
         return false;
     }
 
-    LPVOID load_lib_addr = (LPVOID)GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryA");
+    LPVOID load_lib_addr = (LPVOID)GetProcAddress(
+            GetModuleHandle("kernel32.dll"), "LoadLibraryA");
 
     LPVOID p_dll_path = (LPVOID)VirtualAllocEx(
             proc_handle, NULL, strlen(dll_path)+1, 
             MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-    WriteProcessMemory(proc_handle, p_dll_path, dll_path, strlen(dll_path)+1, NULL);
+    WriteProcessMemory(proc_handle, p_dll_path, dll_path, 
+            strlen(dll_path)+1, NULL);
 
     HANDLE thread = CreateRemoteThread(
             proc_handle, 0, 0, 
@@ -72,12 +88,14 @@ int main() {
     set_debug_privileges();
 
     DWORD proc_id = get_proc_id_from_window_name("World of Warcraft");
-	LPSTR dll_path = "C:\\Users\\Felipe David\\fun\\lazybot\\bin\\lazybot.dll";
+    LPSTR dll_path = "C:\\Users\\Felipe David\\fun\\lazybot\\bin\\lazybot.dll";
     if (!inject_dll(proc_id, dll_path)) {
         printf("Could not inject the dll.\n"); 
         return EXIT_FAILURE;
     }
 
     printf("DLL Injected.\n"); 
+    setup_windows_layout();
+
     return EXIT_SUCCESS;
 }
