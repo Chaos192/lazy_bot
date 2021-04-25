@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define GAME_PATH "\"C:\\Program Files (x86)\\World of Warcraft\\WoW.exe\""
+#define DLL_PATH "C:\\Users\\Felipe David\\fun\\kenny_bot\\bin\\kenny_bot.dll"
+
 void setup_windows_layout() {
     HWND wow_window_handle = FindWindow(NULL, "World of Warcraft"); 
     HWND bot_logs_handle; 
@@ -52,7 +55,8 @@ DWORD get_proc_id_from_window_name(LPSTR window_name) {
     return proc_id;
 }
 
-BOOL inject_dll(DWORD proc_id, LPSTR dll_path) {
+BOOL inject_dll() {
+    DWORD proc_id = get_proc_id_from_window_name("World of Warcraft");
     if (!proc_id) return false;
 
     HANDLE proc_handle = OpenProcess(PROCESS_CREATE_THREAD | 
@@ -68,11 +72,10 @@ BOOL inject_dll(DWORD proc_id, LPSTR dll_path) {
     LPVOID load_lib_addr = (LPVOID)GetProcAddress(
             GetModuleHandle("kernel32.dll"), "LoadLibraryA");
 
+    size_t dll_path_len = strlen(DLL_PATH)+1;
     LPVOID p_dll_path = (LPVOID)VirtualAllocEx(
-            proc_handle, NULL, strlen(dll_path)+1, 
-            MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
-    WriteProcessMemory(proc_handle, p_dll_path, dll_path, 
-            strlen(dll_path)+1, NULL);
+            proc_handle, NULL, dll_path_len, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+    WriteProcessMemory(proc_handle, p_dll_path, DLL_PATH, dll_path_len, NULL);
 
     HANDLE thread = CreateRemoteThread(
             proc_handle, 0, 0, 
@@ -81,23 +84,16 @@ BOOL inject_dll(DWORD proc_id, LPSTR dll_path) {
     WaitForSingleObject(thread, INFINITE);
 
     CloseHandle(proc_handle);
+    printf("DLL injected.\n");
     return true;
 }
 
 int main() {
-    LPSTR game_path = "\"C:\\Program Files (x86)\\World of Warcraft\\WoW.exe\"";
-    ShellExecute(NULL, "open", game_path, NULL, NULL, SW_SHOWDEFAULT);
+    ShellExecute(NULL, "open", GAME_PATH, NULL, NULL, SW_SHOWDEFAULT);
 
     set_debug_privileges();
+    inject_dll();
 
-    DWORD proc_id = get_proc_id_from_window_name("World of Warcraft");
-    LPSTR dll_path = "C:\\Users\\Felipe David\\fun\\kenny_bot\\bin\\kenny_bot.dll";
-    if (!inject_dll(proc_id, dll_path)) {
-        printf("Could not inject the dll.\n"); 
-        return EXIT_FAILURE;
-    }
-
-    printf("DLL Injected.\n"); 
     setup_windows_layout();
 
     return EXIT_SUCCESS;

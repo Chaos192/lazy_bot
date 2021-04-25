@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "game.h"
-#include "object_manager.h"
+#include "objects.h"
 
 void bot() {
     AllocConsole();
@@ -14,14 +14,14 @@ void bot() {
     printf("Injected...\n");
 
     while (true) {
-        if(GetAsyncKeyState('E')) {
+        if (get_player_guid() > 0) {
             system("cls");
-            if (get_player_guid() > 0) {
-                enumerate_visible_objects();
-            }
+            enumerate_visible_objects();
+        }
+        if(GetAsyncKeyState('R')) {
         } else if (GetAsyncKeyState(VK_END)) {
             exit(0);
         }
-        Sleep(100);
+        Sleep(1000);
     }
 }
