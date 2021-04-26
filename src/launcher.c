@@ -5,6 +5,8 @@
 #define GAME_PATH "\"C:\\Program Files (x86)\\World of Warcraft\\WoW.exe\""
 #define DLL_PATH "C:\\Users\\user\\kenny_bot\\bin\\kenny_bot.dll"
 
+#include "utils.h"
+
 void setup_windows_layout() {
     HWND wow_window_handle = FindWindow(NULL, "World of Warcraft"); 
     HWND bot_logs_handle; 
@@ -41,33 +43,8 @@ void set_debug_privileges() {
     }
 }
 
-DWORD get_proc_id_from_window_name(LPSTR window_name) {
-    printf("Waiting for window...\n");
-    HWND window_handle = NULL;
-    while (!(window_handle = FindWindow(NULL, window_name))) Sleep(100);
-
-    DWORD proc_id;
-    GetWindowThreadProcessId(window_handle, &proc_id);
-    if (!proc_id) {
-        printf("Could not get process id.\n");
-    }
-
-    return proc_id;
-}
-
 BOOL inject_dll() {
-    DWORD proc_id = get_proc_id_from_window_name("World of Warcraft");
-    if (!proc_id) return false;
-
-    HANDLE proc_handle = OpenProcess(PROCESS_CREATE_THREAD | 
-                                     PROCESS_QUERY_INFORMATION | 
-                                     PROCESS_VM_OPERATION | 
-                                     PROCESS_VM_WRITE | 
-                                     PROCESS_VM_READ, false, proc_id);
-    if (!proc_handle) {
-        printf("Could not get process handle. Check debug privileges.\n");
-        return false;
-    }
+    HANDLE proc_handle = get_wow_handle();
 
     LPVOID load_lib_addr = (LPVOID)GetProcAddress(
             GetModuleHandle("kernel32.dll"), "LoadLibraryA");
