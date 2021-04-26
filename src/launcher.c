@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #define GAME_PATH "\"C:\\Program Files (x86)\\World of Warcraft\\WoW.exe\""
-#define DLL_PATH "C:\\Users\\Felipe David\\fun\\kenny_bot\\bin\\kenny_bot.dll"
+#define DLL_PATH "C:\\Users\\user\\kenny_bot\\bin\\kenny_bot.dll"
 
 void setup_windows_layout() {
     HWND wow_window_handle = FindWindow(NULL, "World of Warcraft"); 
@@ -13,7 +13,7 @@ void setup_windows_layout() {
                 "C:\\Program Files (x86)\\World of Warcraft\\WoW.exe");
     } while (!bot_logs_handle);
 
-    SetWindowPos(bot_logs_handle, HWND_TOP, 775, 0, 1366-765, 750, 0);
+    SetWindowPos(bot_logs_handle, HWND_TOP, 775, 0, 1366-765, 700, 0);
     SetWindowPos(wow_window_handle, HWND_TOP, -10, 0, 800, 600, 0);
 
     SetForegroundWindow(wow_window_handle);
