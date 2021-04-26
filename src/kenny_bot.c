@@ -11,8 +11,6 @@ void bot() {
     FILE *fDummy;
     freopen_s(&fDummy, "CONOUT$", "w", stdout);
 
-    printf("Injected...\n");
-
     while (true) {
         if (get_player_guid() > 0) {
             system("cls");
@@ -22,6 +20,6 @@ void bot() {
         } else if (GetAsyncKeyState(VK_END)) {
             exit(0);
         }
-        Sleep(1000);
+        Sleep(100);
     }
 }

@@ -115,7 +115,7 @@ float distance_to(position_t position) {
     float delta_y = local_player.player.position.y - position.y;
     float delta_z = local_player.player.position.z - position.z;
 
-    return (float)sqrt(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z);
+    return (float) sqrt(delta_x*delta_x + delta_y*delta_y + delta_z*delta_z);
 }
 
 void enumerate_visible_objects() {
@@ -155,6 +155,7 @@ void enumerate_visible_objects() {
         cur_obj = next;
     }
 
+    if (n_units > 1) {
     wow_unit_t closest_unit = units[0];
     float closest_unit_distance = distance_to(closest_unit.position);
     float unit_distance;
@@ -169,6 +170,7 @@ void enumerate_visible_objects() {
     printf("Closest uint:\n");
     print_unit_info(closest_unit);
     printf("Distance: %f\n", closest_unit_distance);
+    }
     
 
     //for (int i = 0; i < n_objects; i++) {
