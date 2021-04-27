@@ -5,18 +5,18 @@
 
 #include "game.h"
 #include "objects.h"
+#include "utils.h"
 
 void bot() {
     AllocConsole();
     FILE *fDummy;
     freopen_s(&fDummy, "CONOUT$", "w", stdout);
 
+	fix_click_to_move();
     while (true) {
         if (get_player_guid() > 0) {
             system("cls");
             enumerate_visible_objects();
-        }
-        if(GetAsyncKeyState('R')) {
         } else if (GetAsyncKeyState(VK_END)) {
             exit(0);
         }

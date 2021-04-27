@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "utils.h"
+#include "memory.h"
+
 HANDLE get_wow_handle() {
     printf("Waiting for window...\n");
     HWND window_handle = NULL;
@@ -25,4 +28,11 @@ HANDLE get_wow_handle() {
     }
 
     return proc_handle;
+}
+
+// in early versions of the wow client the player stops without riching the
+// clicked position, this function fixes that
+void fix_click_to_move() {
+	DWORD *address_to_write_to = (DWORD*)0x860A90;
+	*address_to_write_to = 0;
 }
