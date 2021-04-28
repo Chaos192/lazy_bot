@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define GAME_PATH "\"C:\\Program Files (x86)\\World of Warcraft\\WoW.exe\""
-#define DLL_PATH "C:\\Users\\user\\kenny_bot\\bin\\kenny_bot.dll"
+#define GAME_PATH "\"C:\\Program Files (x86)\\World of Warcraft Classic\\WoW.exe\""
+#define DLL_PATH "C:\\kenny_bot\\bin\\kenny_bot.dll"
 
 #include "utils.h"
 
@@ -12,7 +12,7 @@ void setup_windows_layout() {
     HWND bot_logs_handle; 
     do {
         bot_logs_handle = FindWindow(NULL, 
-                "C:\\Program Files (x86)\\World of Warcraft\\WoW.exe");
+                "C:\\Program Files (x86)\\World of Warcraft Classic\\WoW.exe");
     } while (!bot_logs_handle);
 
     SetWindowPos(bot_logs_handle, HWND_TOP, 775, 0, 1366-765, 700, 0);

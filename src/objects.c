@@ -25,6 +25,7 @@ position_t setup_position(DWORD object_p) {
     return position;
 }
 
+// TODO: Debug and see why the program's crash with Unit: 'Guardman Oliver' and similars
 wow_unit_t setup_unit(DWORD cur_obj) {
     wow_unit_t unit;
     unit.object = setup_object(cur_obj);
@@ -155,22 +156,22 @@ void enumerate_visible_objects() {
         cur_obj = next;
     }
 
-    if (n_units > 1) {
-    wow_unit_t closest_unit = units[0];
-    float closest_unit_distance = distance_to(closest_unit.position);
-    float unit_distance;
-    for (int i = 1; i < n_units; i++) {
-        unit_distance =  distance_to(units[i].position);
-        if (unit_distance < closest_unit_distance) {
-            closest_unit = units[i];
-            closest_unit_distance = unit_distance;
-        }
-    }
+    //if (n_units > 1) {
+    //wow_unit_t closest_unit = units[0];
+    //float closest_unit_distance = distance_to(closest_unit.position);
+    //float unit_distance;
+    //for (int i = 1; i < n_units; i++) {
+    //    unit_distance =  distance_to(units[i].position);
+    //    if (unit_distance < closest_unit_distance) {
+    //        closest_unit = units[i];
+    //        closest_unit_distance = unit_distance;
+    //    }
+    //}
 
-    printf("Closest uint:\n");
-    print_unit_info(closest_unit);
-    printf("Distance: %f\n", closest_unit_distance);
-    }
+    //printf("Closest uint:\n");
+    //print_unit_info(closest_unit);
+    //printf("Distance: %f\n", closest_unit_distance);
+    //}
     
 
     //for (int i = 0; i < n_objects; i++) {
@@ -178,10 +179,10 @@ void enumerate_visible_objects() {
     //    printf("\n");
     //}
 
-    //for (int i = 0; i < n_units; i++) {
-    //    print_unit_info(units[i]);
-    //    printf("\n");
-    //}
+    for (int i = 0; i < n_units; i++) {
+        print_unit_info(units[i]);
+        printf("\n");
+    }
 
     //if (n_players) {
     //    for (int i = 0; i < n_players; i++) {
