@@ -3,10 +3,8 @@
 #include <stdbool.h>
 #include <math.h>
 
-#include "objects.h"
 #include "game.h"
-
-static local_player_t local_player;
+#include "offsets.h"
 
 wow_object_t setup_object(DWORD cur_obj) {
     wow_object_t object;
@@ -142,6 +140,7 @@ void enumerate_visible_objects() {
             case Player:
                 if (*(ULONGLONG*)(cur_obj+CUR_OBJ_GUID) == get_player_guid()) {
                     local_player = setup_local_player(cur_obj);
+                    player_ptr = cur_obj;
                 } else {
                     players[n_players++] = setup_player(cur_obj);
                 }
@@ -156,17 +155,18 @@ void enumerate_visible_objects() {
         cur_obj = next;
     }
 
-    //if (n_units > 1) {
-    //wow_unit_t closest_unit = units[0];
-    //float closest_unit_distance = distance_to(closest_unit.position);
-    //float unit_distance;
-    //for (int i = 1; i < n_units; i++) {
-    //    unit_distance =  distance_to(units[i].position);
-    //    if (unit_distance < closest_unit_distance) {
-    //        closest_unit = units[i];
-    //        closest_unit_distance = unit_distance;
-    //    }
-    //}
+    if (n_units > 1) {
+    wow_unit_t closest_unit = units[0];
+    float closest_unit_distance = distance_to(closest_unit.position);
+    float unit_distance;
+    for (int i = 1; i < n_units; i++) {
+        unit_distance =  distance_to(units[i].position);
+        if (unit_distance < closest_unit_distance) {
+            closest_unit = units[i];
+            closest_unit_distance = unit_distance;
+        }
+    }
+    position_closest_unit = &closest_unit.position;
 
     //printf("Closest uint:\n");
     //print_unit_info(closest_unit);
@@ -179,10 +179,10 @@ void enumerate_visible_objects() {
     //    printf("\n");
     //}
 
-    for (int i = 0; i < n_units; i++) {
-        print_unit_info(units[i]);
-        printf("\n");
-    }
+    //for (int i = 0; i < n_units; i++) {
+    //    print_unit_info(units[i]);
+    //    printf("\n");
+    //}
 
     //if (n_players) {
     //    for (int i = 0; i < n_players; i++) {

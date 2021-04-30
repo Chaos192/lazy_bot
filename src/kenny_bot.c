@@ -17,6 +17,8 @@ void bot() {
         if (get_player_guid() > 0) {
             system("cls");
             enumerate_visible_objects();
+        } else if (GetAsyncKeyState("I")) {
+            game_click_to_move(player_ptr, Move, NULL, closest_unit_xyz, 0);
         } else if (GetAsyncKeyState(VK_END)) {
             exit(0);
         }
