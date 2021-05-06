@@ -3,14 +3,18 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define DLL_NAME "kenny_bot.dll"
+#define DLL_PATH "C:\\kenny_bot\\src\\bot\\kenny_bot.dll"
+#define GAME_PATH "C:\\wow\\WoW.exe"
 #define PROCESS_WINDOW_NAME "World of Warcraft"
 
 bool set_debug_privileges();
 HANDLE get_proc_handle_by_window_name(const char* window_name);
-bool inject_dll(HANDLE proc_handle, const char* dll_name);
+bool inject_dll(HANDLE proc_handle);
+void setup_windows_layout();
 
 int main() {
+    ShellExecuteA(NULL, "open", GAME_PATH, NULL, NULL, SW_SHOWDEFAULT);
+
     if (!set_debug_privileges()) {
         return EXIT_FAILURE;
     }
@@ -20,49 +24,48 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    if (!inject_dll(process_handle, DLL_NAME)) {
+    if (!inject_dll(process_handle)) {
         return EXIT_FAILURE;
     }
 
+    setup_windows_layout();
+    CloseHandle(process_handle);
     return EXIT_SUCCESS;
 }
 
-bool inject_dll(HANDLE proc_handle, const char *dll_name) {
+void setup_windows_layout() {
+    Sleep(1000);
+    HWND wow_window = FindWindow(NULL, "World of Warcraft");
+    HWND console_window = FindWindow(NULL, GAME_PATH);
+
+    MoveWindow(wow_window, -15, 0, 800, 600, FALSE);
+    MoveWindow(console_window, 770, 0, 1366-760, 750, TRUE);
+}
+
+bool inject_dll(HANDLE proc_handle) {
     puts("[*] Injecting DLL.");
-    char dll_path[512];
-    DWORD status = GetFullPathName(dll_name, sizeof(dll_path), dll_path, NULL);
+    size_t dll_path_length = strlen(DLL_PATH) + 1;
 
-    HANDLE dll_handle = CreateFileA(dll_path, 
-                                    GENERIC_READ, 
-                                    0, 
-                                    NULL, 
-                                    OPEN_EXISTING,
-                                    FILE_ATTRIBUTE_NORMAL,
-                                    NULL);
-
-    uint32_t dll_size = GetFileSize(dll_handle, NULL);
-
-    // Allocating space for the dll in the remote process
     void *allocated_space = VirtualAllocEx(proc_handle, 
                                            NULL, 
-                                           dll_size, 
-                                           MEM_COMMIT|MEM_RESERVE,
+                                           dll_path_length, 
+                                           MEM_COMMIT|MEM_RESERVE, 
                                            PAGE_EXECUTE_READWRITE);
-    if (!allocated_space) {
-        puts("[!] Could not allocate space for dll in remtoe process.");
-        return false;
-    }
 
-    // Load the dll in our heap and then write to the remote process
-    void *buffer = HeapAlloc(GetProcessHeap(), 0, dll_size);
-    if (!buffer) {
-        puts("[!] Could not allocate space for the dll in our heap.\n");
-        return false;
-    }
-    ReadFile(dll_handle, buffer, dll_size, NULL, NULL);
-    WriteProcessMemory(proc_handle, allocated_space, buffer, dll_size, NULL);
+    WriteProcessMemory(proc_handle, allocated_space, DLL_PATH, dll_path_length, NULL);
 
-    // TODO: Figure out how to execute the dll...
+    void *load_lib_addr = 
+        GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "LoadLibraryA");
+
+    CreateRemoteThread(proc_handle, 
+                       NULL, 
+                       0, 
+                       (LPTHREAD_START_ROUTINE)load_lib_addr, 
+                       allocated_space, 
+                       0, 
+                       NULL);
+
+    VirtualFreeEx(proc_handle, allocated_space, dll_path_length, MEM_DECOMMIT|MEM_RELEASE);
 
     return true;
 }
