@@ -3,13 +3,13 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#define DLL_PATH "C:\\kenny_bot\\src\\bot\\kenny_bot.dll"
+#define DLL_PATH "C:\\kenny_bot\\src\\kenny_bot.dll"
 #define GAME_PATH "C:\\wow\\WoW.exe"
 #define PROCESS_WINDOW_NAME "World of Warcraft"
 
-bool set_debug_privileges();
 HANDLE get_proc_handle_by_window_name(const char* window_name);
 bool inject_dll(HANDLE proc_handle);
+bool set_debug_privileges();
 void setup_windows_layout();
 
 int main() {
@@ -77,10 +77,6 @@ HANDLE get_proc_handle_by_window_name(const char* window_name) {
 
     uint32_t proc_id;
     GetWindowThreadProcessId(window_handle, &proc_id);
-    if (!proc_id) {
-        puts("[!] Could not get process id.");
-        return NULL;
-    }
 
     HANDLE proc_handle = OpenProcess(PROCESS_CREATE_THREAD |
                                      PROCESS_QUERY_INFORMATION |
