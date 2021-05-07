@@ -19,6 +19,7 @@ void bot() {
 
     while (TRUE) {
         if (GetAsyncKeyState('M')) {
+            system("cls");
             enumerate_visible_objects();
         }
         Sleep(100);

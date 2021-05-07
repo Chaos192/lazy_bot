@@ -3,6 +3,7 @@
 *.swp
 *.exe
 *.pdb
+*.ilk
 .vs/
 bin/
 *~

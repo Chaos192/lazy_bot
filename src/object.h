@@ -16,9 +16,4 @@ typedef struct object_t {
     enum object_type_t object_type;
 } object_t;
 
-typedef struct objects_t {
-    uint32_t n_objects;
-    object_t objects[215];
-} objects_t;
-
-objects_t game_objects;
+void print_object_info(object_t object);
