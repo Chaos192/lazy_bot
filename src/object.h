@@ -13,5 +13,5 @@ enum object_type_t {
 typedef struct object_t {
     uint64_t guid;
     uint32_t pointer;
-    object_type_t object_type;
+    enum object_type_t object_type;
 } object_t;

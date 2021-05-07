@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define DLL_PATH "C:\\kenny_bot\\src\\kenny_bot.dll"
 #define GAME_PATH "C:\\wow\\WoW.exe"
@@ -43,7 +44,7 @@ void setup_windows_layout() {
 }
 
 bool inject_dll(HANDLE proc_handle) {
-    puts("[*] Injecting DLL.");
+    printf("[*] Injecting DLL.\n");
     size_t dll_path_length = strlen(DLL_PATH) + 1;
 
     void *allocated_space = VirtualAllocEx(proc_handle, 
@@ -71,7 +72,7 @@ bool inject_dll(HANDLE proc_handle) {
 }
 
 HANDLE get_proc_handle_by_window_name(const char* window_name) {
-    puts("[*] Waiting for window ...");
+    printf("[*] Waiting for window ...\n");
     HWND window_handle;
     while (!(window_handle = FindWindow(NULL, window_name)));
 
@@ -86,24 +87,24 @@ HANDLE get_proc_handle_by_window_name(const char* window_name) {
                                      false,
                                      proc_id);
     if (!proc_handle) {
-        puts("[!] Could not get process handle. Check debug privileges.");
+        printf("[!] Could not get process handle. Check debug privileges.\n");
     }
     return proc_handle;
 }
 
 bool set_debug_privileges() {
-    puts("[*] Setting debug privileges.");
+    printf("[*] Setting debug privileges.\n");
     TOKEN_PRIVILEGES tp;
     LUID luid;
 
     HANDLE token_handle;
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token_handle)) {
-        puts("[!] Could not get process token.");
+        printf("[!] Could not get process token.\n");
         return false;
     }
 
     if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid)) {
-        puts("[!] Could not look up privilege value for SE_DEBUG_NAME.");
+        printf("[!] Could not look up privilege value for SE_DEBUG_NAME.\n");
         return false;
     }
 
@@ -118,7 +119,7 @@ bool set_debug_privileges() {
                                (PTOKEN_PRIVILEGES) NULL,
                                (PDWORD) NULL)) 
     {
-        puts("[!] Could not adjust token privileges.");
+        printf("[!] Could not adjust token privileges.\n");
         return false;
     }
 

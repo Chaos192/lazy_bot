@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <stdio.h>
 
-#include "game_functions.h"
 #include "object_manager.h"
 
 void bot();
@@ -19,7 +18,12 @@ void bot() {
     freopen_s(&file_dummy, "CONOUT$", "w", stdout);
 
     while (TRUE) {
-        enumarate_visible_objects();
+        if (GetAsyncKeyState('M')) {
+            enumerate_visible_objects();
+        }
+        if (GetAsyncKeyState('Q')) {
+            exit(0);
+        }
         Sleep(100);
     }
 }
