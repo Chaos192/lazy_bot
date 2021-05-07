@@ -21,9 +21,6 @@ void bot() {
         if (GetAsyncKeyState('M')) {
             enumerate_visible_objects();
         }
-        if (GetAsyncKeyState('Q')) {
-            exit(0);
-        }
         Sleep(100);
     }
 }
