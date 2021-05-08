@@ -41,6 +41,8 @@ void setup_windows_layout() {
 
     MoveWindow(wow_window, -15, 0, 800, 600, FALSE);
     MoveWindow(console_window, 770, 0, 1366-760, 750, TRUE);
+
+    SetForegroundWindow(wow_window);
 }
 
 bool inject_dll(HANDLE proc_handle) {
