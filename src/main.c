@@ -18,7 +18,7 @@ void bot() {
     freopen_s(&file_dummy, "CONOUT$", "w", stdout);
 
     while (TRUE) {
-        if (GetAsyncKeyState('M')) {
+        if (GetAsyncKeyState(VK_END)) {
             system("cls");
             enumerate_visible_objects();
         }

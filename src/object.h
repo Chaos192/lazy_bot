@@ -10,10 +10,19 @@ enum object_type_t {
     Corpse        = 0x7,
 };
 
-typedef struct object_t {
+typedef struct {
+    float x;
+    float y;
+    float z;
+} position_t;
+
+typedef struct {
     uint64_t guid;
     uint32_t pointer;
-    enum object_type_t object_type;
+    uint32_t health;
+    char *name_ptr;
+    position_t position;
+    enum object_type_t type;
 } object_t;
 
-void print_object_info(object_t object);
+void print_object_info(object_t *object);
