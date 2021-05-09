@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define DLL_PATH "C:\\kenny_bot\\src\\kenny_bot.dll"
-#define GAME_PATH "C:\\wow\\WoW.exe"
+#define DLL_PATH "C:\\kenny\\bin\\kenny_bot.dll"
+#define GAME_PATH "C:\\Program Files (x86)\\World of Warcraft\\WoW.exe"
 #define PROCESS_WINDOW_NAME "World of Warcraft"
 
 HANDLE get_proc_handle_by_window_name(const char* window_name);

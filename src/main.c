@@ -16,6 +16,7 @@ void bot() {
     AllocConsole();
     FILE *file_dummy;
     freopen_s(&file_dummy, "CONOUT$", "w", stdout);
+    printf("Injected.\n");
 
     while (TRUE) {
         if (GetAsyncKeyState(VK_END)) {

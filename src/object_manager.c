@@ -9,9 +9,11 @@
 const uint32_t OBJECT_TYPE_OFFSET = 0x14;
 const uint32_t UNIT_HEALTH_OFFSET = 0x58;
 
-static int n_objects;
-static object_t object;
+static int n_players;
+static int n_units;
 static object_t local_player;
+static object_t players[100];
+static object_t units[100];
 
 float local_player_distance_from_position(position_t position) {
     int delta_x = local_player.position.x - position.x;
@@ -67,6 +69,7 @@ void set_player_name_ptr(object_t *object) {
 }
 
 int32_t __fastcall callback(void *thiscall_garbage, uint32_t filter, uint64_t guid) {
+    object_t object = {0};
     object.guid = guid;
     object.pointer = game_get_object_ptr(guid);
     object.type = 
@@ -76,20 +79,19 @@ int32_t __fastcall callback(void *thiscall_garbage, uint32_t filter, uint64_t gu
         uint32_t object_descriptor_addr = get_object_descriptor_addr(&object);
         object.health = read_uint32(object_descriptor_addr + UNIT_HEALTH_OFFSET);
         set_unit_position(&object);
-
-        // Player names are stored differently from other units
-        if (object.type == Unit) {
-            set_unit_name_ptr(&object);
-        } else if (object.type == Player) {
-            set_player_name_ptr(&object);
-            if (object.guid == game_get_player_guid()) {
-                local_player = object;
-            }
-        }
     }
 
-    n_objects++;
-    print_object_info(&object);
+    // Player names are stored differently from other units
+    if (object.type == Unit) {
+        set_unit_name_ptr(&object);
+        units[n_units++] = object;
+    } else if (object.type == Player) {
+        set_player_name_ptr(&object);
+        if (object.guid == game_get_player_guid()) {
+            local_player = object;
+        }
+        players[n_players++] = object;
+    }
 
     return 1;
 }
@@ -109,7 +111,6 @@ const char *object_type_code_to_string(enum object_type_t object_type) {
 }
 
 void print_object_info(object_t *object) {
-    printf("Object %d\n", n_objects);
     printf("ObjectType: %s\n", object_type_code_to_string(object->type));
     printf("Guid: %llu\n", object->guid);
     printf("Pointer: %u\n", object->pointer);
@@ -124,11 +125,28 @@ void print_object_info(object_t *object) {
     printf("\n");
 }
 
+int closest_unit_to_player() {
+    float closest_distance = 0;
+    int closest_unit_index = 0;
+    float *unit_distance;
+    for (int i = 0; i < n_units; i++) {
+        unit_distance = &(units[i].distance_from_local_player);
+        *unit_distance = local_player_distance_from_position(units[i].position);
+        if (i == 0) {
+            closest_distance = *unit_distance;
+        } else if (*unit_distance < closest_distance) {
+            closest_distance = *unit_distance;
+            closest_unit_index = i;
+        }
+    }
+    return closest_unit_index;
+}
+
 void enumerate_visible_objects() {
     if (game_get_player_guid()) {
-        n_objects = 0;
+        n_units   = 0;
+        n_players = 0;
         game_enumerate_visible_objects(callback, 0);
-        print_object_info(&local_player);
-        printf("%d Objects found.\n", n_objects);
+        print_object_info(&units[closest_unit_to_player()]);
     }
 }
