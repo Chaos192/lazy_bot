@@ -25,5 +25,3 @@ typedef struct {
     enum object_type_t type;
     float distance_from_local_player;
 } object_t;
-
-void print_object_info(object_t *object);

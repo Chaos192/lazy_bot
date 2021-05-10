@@ -6,6 +6,7 @@
 #include "object.h"
 #include "memory_manager.h"
 #include "game_functions.h"
+#include "player.c"
 
 const uint32_t OBJECT_TYPE_OFFSET = 0x14;
 const uint32_t UNIT_HEALTH_OFFSET = 0x58;
@@ -85,6 +86,8 @@ int32_t __fastcall callback(void *thiscall_garbage, uint32_t filter, uint64_t gu
     // Player names are stored differently from other units
     if (object.type == Unit) {
         set_unit_name_ptr(&object);
+        object.distance_from_local_player = 
+            local_player_distance_from_position(object.position);
         units[n_units++] = object;
     } else if (object.type == Player) {
         set_player_name_ptr(&object);
@@ -126,21 +129,21 @@ void print_object_info(object_t *object) {
     printf("\n");
 }
 
-int closest_unit_to_player() {
-    float closest_distance = 0;
-    int closest_unit_index = 0;
-    float *unit_distance;
-    for (int i = 0; i < n_units; i++) {
-        unit_distance = &(units[i].distance_from_local_player);
-        *unit_distance = local_player_distance_from_position(units[i].position);
-        if (i == 0) {
-            closest_distance = *unit_distance;
-        } else if (*unit_distance < closest_distance) {
-            closest_distance = *unit_distance;
-            closest_unit_index = i;
+void sort_units_by_distance() {
+    object_t tmp;
+    int swaps = -1;
+    while (swaps != 0) {
+        swaps = 0;
+        for (int i = 0; i < n_units-2; i++) {
+            if (units[i].distance_from_local_player > 
+                units[i+1].distance_from_local_player) {
+                tmp = units[i];
+                units[i] = units[i+1];
+                units[i+1] = tmp;
+                swaps++;
+            }
         }
     }
-    return closest_unit_index;
 }
 
 void enumerate_visible_objects() {
@@ -148,6 +151,8 @@ void enumerate_visible_objects() {
         n_units   = 0;
         n_players = 0;
         game_enumerate_visible_objects(callback, 0);
-        print_object_info(&units[closest_unit_to_player()]);
+        sort_units_by_distance();
+        print_object_info(units);
+        go_to(local_player, (units[0]).position);
     }
 }
