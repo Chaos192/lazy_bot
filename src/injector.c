@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define DLL_PATH "C:\\kenny\\bin\\kenny_bot.dll"
+#define DLL_PATH "C:\\Users\\Felipe David\\Documents\\work\\kenny\\bin\\kenny_bot.dll"
 #define GAME_PATH "C:\\Program Files (x86)\\World of Warcraft\\WoW.exe"
 #define PROCESS_WINDOW_NAME "World of Warcraft"
 
