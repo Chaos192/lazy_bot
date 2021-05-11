@@ -1,3 +1,4 @@
+#include <windows.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -6,16 +7,23 @@
 #include "object.h"
 #include "memory_manager.h"
 #include "game_functions.h"
-#include "player.c"
 
-const uint32_t OBJECT_TYPE_OFFSET = 0x14;
-const uint32_t UNIT_HEALTH_OFFSET = 0x58;
+static const uint32_t OBJECT_TYPE_OFFSET = 0x14;
+static const uint32_t UNIT_HEALTH_OFFSET = 0x58;
 
 static int n_players;
 static int n_units;
 static object_t local_player;
 static object_t players[100];
 static object_t units[100];
+
+void go_to(object_t local_player, position_t position) {
+    uint64_t interact_guid_ptr = 0; 
+    uint32_t this_call_pointer = *(uint32_t*)0xB41414;
+    this_call_pointer = *(uint32_t*)(0x1c+this_call_pointer);
+    this_call_pointer = *(uint32_t*)(0x14+this_call_pointer);
+    game_click_to_move((void*)this_call_pointer, local_player.pointer, Move, &interact_guid_ptr, &position, 2);
+}
 
 float local_player_distance_from_position(position_t position) {
     int delta_x = local_player.position.x - position.x;
@@ -153,6 +161,7 @@ void enumerate_visible_objects() {
         game_enumerate_visible_objects(callback, 0);
         sort_units_by_distance();
         print_object_info(units);
+        Sleep(1);
         go_to(local_player, (units[0]).position);
     }
 }
