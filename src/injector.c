@@ -14,7 +14,7 @@ bool set_debug_privileges();
 void setup_windows_layout();
 
 int main() {
-    ShellExecuteA(NULL, "open", GAME_PATH, NULL, NULL, SW_SHOWDEFAULT);
+    //ShellExecuteA(NULL, "open", GAME_PATH, NULL, NULL, SW_SHOWDEFAULT);
 
     if (!set_debug_privileges()) {
         return EXIT_FAILURE;
@@ -29,7 +29,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    setup_windows_layout();
+    //setup_windows_layout();
     CloseHandle(process_handle);
     return EXIT_SUCCESS;
 }
