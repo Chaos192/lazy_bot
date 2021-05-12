@@ -3,9 +3,6 @@
 
 #include "object_manager.h"
 
-#define MYMENU_EXIT         (WM_APP + 101)
-#define MYMENU_MESSAGEBOX   (WM_APP + 102)
-
 HINSTANCE inj_inst;
 HWND prnt_hWnd;
 
@@ -53,13 +50,11 @@ BOOL RegisterDLLWindowClass(char szClassName[])
 
 BOOL WINAPI DllMain(HINSTANCE inst, DWORD Reason, LPVOID Reserved) {
     if (Reason == DLL_PROCESS_ATTACH) {
-        CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)bot, NULL, 0, NULL);
         inj_inst = inst;
-        CreateThread(NULL, 0, ThreadProc, (LPVOID)"Kenny Bot", 0, NULL);
+        CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)bot, NULL, 0, NULL);
     }
     return TRUE;
 }
-
 
 void bot() {
     AllocConsole();
@@ -67,6 +62,7 @@ void bot() {
     freopen_s(&file_dummy, "CONOUT$", "w", stdout);
     printf("Injected.\n");
 
+    CreateThread(NULL, 0, ThreadProc, (LPVOID)"Kenny Bot", 0, NULL);
 
     while (TRUE) {
         if (GetAsyncKeyState(VK_END)) {
