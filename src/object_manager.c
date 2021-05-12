@@ -83,7 +83,7 @@ int32_t __fastcall callback(void *thiscall_garbage, uint32_t filter, uint64_t gu
     object.guid = guid;
     object.pointer = game_get_object_ptr(guid);
     object.type = 
-        (enum object_type_t) read_byte(object.pointer + OBJECT_TYPE_OFFSET);
+        (object_type_t) read_byte(object.pointer + OBJECT_TYPE_OFFSET);
 
     if (object.type == Unit || object.type == Player) {
         uint32_t object_descriptor_addr = get_object_descriptor_addr(&object);
@@ -108,7 +108,7 @@ int32_t __fastcall callback(void *thiscall_garbage, uint32_t filter, uint64_t gu
     return 1;
 }
 
-const char *object_type_code_to_string(enum object_type_t object_type) {
+const char *object_type_code_to_string(object_type_t object_type) {
     switch (object_type) {
         case None:          return "None";
         case Item:          return "Item";

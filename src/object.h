@@ -1,5 +1,5 @@
 
-enum object_type_t {
+typedef enum {
     None          = 0x0,
     Item          = 0x1,
     Container     = 0x2,
@@ -8,7 +8,7 @@ enum object_type_t {
     GameObject    = 0x5,
     DynamicObject = 0x6,
     Corpse        = 0x7,
-};
+} object_type_t;
 
 typedef struct {
     float x;
@@ -22,6 +22,6 @@ typedef struct {
     uint32_t health;
     char *name_ptr;
     position_t position;
-    enum object_type_t type;
+    object_type_t type;
     float distance_from_local_player;
 } object_t;
