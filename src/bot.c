@@ -36,8 +36,8 @@ void push_state(state_t state) {
     }
 }
 
-const char *state_to_string(state_t state) {
-    switch (state) {
+const char *state_to_string() {
+    switch (top_state()) {
         case NO_STATE:   return "No state.\n";
         case CRY_STATE:  return "T--------T.\n";
         case YELL_STATE: return "HAAAAAAAAAAAAAA.\n";
@@ -50,7 +50,7 @@ void initialize_bot() {
     states.n_max_state = (int)sizeof(states.stack)/sizeof(state_t);
     while (true) {
         if (bot_running) {
-            printf("State: %s\n", state_to_string(top_state()));
+            printf("State: %s\n", state_to_string());
             Sleep(1000);
         }
     }

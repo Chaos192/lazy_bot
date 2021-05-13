@@ -13,6 +13,8 @@
 HINSTANCE inj_inst;
 HWND prnt_hWnd;
 
+static HWND hWndExample; // log buffer
+
 //HMENU CreateDLLWindowMenu();
 
 BOOL CALLBACK EnumChildProc(HWND hWnd, LPARAM lParam)
@@ -43,6 +45,7 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
                 WS_CHILD | WS_VISIBLE | WS_BORDER,
                 325, 10, 70, 20, hwnd, (HMENU) POP_STATE, NULL, NULL);
             EnumChildWindows(hwnd, EnumChildProc, 0);
+            hWndExample = CreateWindow("STATIC", "test", WS_VISIBLE | WS_CHILD | SS_LEFT, 50,50,100,100, hwnd, NULL, inj_inst, NULL);
             break;
 
 		case WM_COMMAND:

@@ -16,3 +16,4 @@ current_states_t states;
 static bool bot_running;
 
 void initialize_bot();
+const char *state_to_string();
