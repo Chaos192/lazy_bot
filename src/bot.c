@@ -3,8 +3,15 @@
 #include <stdbool.h>
 #include "bot.h"
 
-current_states_t states;
-bool bot_running;
+bool bot_running = true;
+
+void disable_bot() {
+    bot_running = false;
+}
+
+void enable_bot() {
+    bot_running = true;
+}
 
 state_t top_state() {
     if (states.top_state == -1) {
@@ -41,9 +48,10 @@ const char *state_to_string(state_t state) {
 void initialize_bot() {
     states.top_state = -1;
     states.n_max_state = (int)sizeof(states.stack)/sizeof(state_t);
-    bot_running = true;
-    while (bot_running) {
-        printf("State: %s\n", state_to_string(top_state()));
-        Sleep(1000);
+    while (true) {
+        if (bot_running) {
+            printf("State: %s\n", state_to_string(top_state()));
+            Sleep(1000);
+        }
     }
 }

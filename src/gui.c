@@ -48,10 +48,10 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 		case WM_COMMAND:
                switch(wParam) {
                     case START_BOT:
-                        initialize_bot();
+                        enable_bot();
                         break;
                     case STOP_BOT:
-                        bot_running = false;
+                        disable_bot();
                         break;
                     case PUSH_CRY_STATE:
                         push_state(CRY_STATE);

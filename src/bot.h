@@ -13,6 +13,6 @@ typedef struct {
 } current_states_t;
 
 current_states_t states;
-bool bot_running;
+static bool bot_running;
 
 void initialize_bot();
