@@ -1,104 +1,40 @@
 #include <windows.h>
-#include <stdbool.h>
+#include <stdint.h>
 
-#include "object_manager.h"
-#include "bot.h"
+#include "game_functions.h"
 
-#define START_BOT       1
-#define STOP_BOT        2
-#define PUSH_CRY_STATE  3
-#define PUSH_YELL_STATE 4
-#define POP_STATE       5
+#define WINDOW_NAME "Lazy Bot"
 
-HINSTANCE inj_inst;
-HWND prnt_hWnd;
+#define JUMP 0
 
-static HWND hWndExample; // log buffer
-
-//HMENU CreateDLLWindowMenu();
-
-BOOL CALLBACK EnumChildProc(HWND hWnd, LPARAM lParam)
-{
-    HFONT hfDefault = (HFONT) GetStockObject(DEFAULT_GUI_FONT);
-    SendMessage(hWnd, WM_SETFONT, (WPARAM) hfDefault, MAKELPARAM(TRUE, 0));
-    return TRUE;
-}
-
-LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message)
-    {
+LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+    switch (message) {
         case WM_CREATE:
-            CreateWindowW(L"Button", L"Start",
-                WS_CHILD | WS_VISIBLE | WS_BORDER,
-                5, 10, 70, 20, hwnd, (HMENU) START_BOT, NULL, NULL);
-            CreateWindowW(L"Button", L"Stop",
-                WS_CHILD | WS_VISIBLE | WS_BORDER,
-                85, 10, 70, 20, hwnd, (HMENU) STOP_BOT, NULL, NULL);
-            CreateWindowW(L"Button", L"PushCryState",
-                WS_CHILD | WS_VISIBLE | WS_BORDER,
-                165, 10, 70, 20, hwnd, (HMENU) PUSH_CRY_STATE, NULL, NULL);
-            CreateWindowW(L"Button", L"PushYellState",
-                WS_CHILD | WS_VISIBLE | WS_BORDER,
-                245, 10, 70, 20, hwnd, (HMENU) PUSH_YELL_STATE, NULL, NULL);
-            CreateWindowW(L"Button", L"PopState",
-                WS_CHILD | WS_VISIBLE | WS_BORDER,
-                325, 10, 70, 20, hwnd, (HMENU) POP_STATE, NULL, NULL);
-            EnumChildWindows(hwnd, EnumChildProc, 0);
-            hWndExample = CreateWindow("STATIC", "test", WS_VISIBLE | WS_CHILD | SS_LEFT, 50,50,100,100, hwnd, NULL, inj_inst, NULL);
+            CreateWindowW(L"Button", L"Jump",
+                          WS_CHILD | WS_VISIBLE | WS_BORDER,
+                          5, 10, 70, 20, hwnd, (HMENU)JUMP, NULL, NULL);
             break;
-
-		case WM_COMMAND:
-               switch(wParam) {
-                    case START_BOT:
-                        enable_bot();
-                        break;
-                    case STOP_BOT:
-                        disable_bot();
-                        break;
-                    case PUSH_CRY_STATE:
-                        push_state(CRY_STATE);
-                        break;
-                    case PUSH_YELL_STATE:
-                        push_state(YELL_STATE);
-                        break;
-                    case POP_STATE:
-                        pop_state();
-                        break;
-               }
-               break;
-		case WM_DESTROY:
-			PostQuitMessage (0);
-			break;
-		default:
+        case WM_COMMAND:
+            switch (wParam) {
+                case JUMP:
+                    char bytes_to_write[] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xc3 };
+                    WriteProcessMemory(GetCurrentProcess(), (void *)0x494A50, (void*)bytes_to_write, sizeof(bytes_to_write), NULL); 
+                    game_call_lua("Jump()", "");
+                    break;
+            }
+            break;
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            break;
+        default: 
 			return DefWindowProc (hwnd, message, wParam, lParam);
     }
     return 0;
 }
 
-DWORD WINAPI ThreadProc( LPVOID lpParam ) {
-	MSG messages;
-	RegisterDLLWindowClass("InjectedDLLWindowClass");
-    //HMENU hMenu = CreateDLLWindowMenu();
-	prnt_hWnd = FindWindow("Window Injected Into ClassName", "Window Injected Into Caption");
-	HWND hwnd = CreateWindowEx (0, "InjectedDLLWindowClass", lpParam, WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, 410, 200, prnt_hWnd, NULL, inj_inst, NULL );
-	ShowWindow (hwnd, SW_SHOWNORMAL);
-    //font 
-    HFONT hFont = CreateFont (13, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, ANSI_CHARSET, 
-      OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
-      DEFAULT_PITCH | FF_DONTCARE, TEXT("Consolas"));
-    SendMessage(hwnd, WM_SETFONT, (WPARAM)hFont, TRUE);
-	while (GetMessage (&messages, NULL, 0, 0))
-	{
-		TranslateMessage(&messages);
-        DispatchMessage(&messages);
-	}
-	return 1;
-}
-
-BOOL RegisterDLLWindowClass(char szClassName[]) {
+BOOL RegisterDLLWindowClass(const char *szClassName, HINSTANCE instance_handle) {
     WNDCLASSEX wc;
-    wc.hInstance =  inj_inst;
+    wc.hInstance = instance_handle;
     wc.lpszClassName = (LPCSTR)szClassName;
     wc.lpfnWndProc = DLLWindowProc;
     wc.style = CS_DBLCLKS;
@@ -115,19 +51,27 @@ BOOL RegisterDLLWindowClass(char szClassName[]) {
     return 1;
 }
 
-//HMENU CreateDLLWindowMenu() {
-//	HMENU hMenu;
-//	hMenu = CreateMenu();
-//	HMENU hMenuPopup;
-//    if(hMenu==NULL)
-//        return FALSE;
-//    hMenuPopup = CreatePopupMenu();
-//	AppendMenu (hMenuPopup, MF_STRING, MYMENU_EXIT, TEXT("Exit"));
-//    AppendMenu (hMenu, MF_POPUP, (UINT_PTR) hMenuPopup, TEXT("File")); 
-//
-//	hMenuPopup = CreatePopupMenu();
-//    AppendMenu (hMenuPopup, MF_STRING,MYMENU_MESSAGEBOX, TEXT("MessageBox")); 
-//    AppendMenu (hMenu, MF_POPUP, (UINT_PTR) hMenuPopup, TEXT("Test")); 
-//	return hMenu;
-//}
+uint32_t WINAPI start_gui(LPVOID injected_instance) {
+    //setup_client(); // do things like enable lua and correct click to move
+    MSG messages;
+    RegisterDLLWindowClass("InjectedDLLWindowClass", *(HINSTANCE*)injected_instance);
+    HWND prnt_hWnd = FindWindow("Window Injected Into ClassName", 
+                           "Window Injected Into Caption");
+    HWND hWnd = CreateWindowEx(0, 
+                               "InjectedDLLWindowClass", 
+                               WINDOW_NAME,
+                               WS_SYSMENU | WS_VISIBLE,
+                               CW_USEDEFAULT, CW_USEDEFAULT,
+                               500, 250,
+                               prnt_hWnd,
+                               NULL,
+                               *(HINSTANCE*)injected_instance,
+                               NULL);
+    ShowWindow(hWnd, SW_SHOWNORMAL);
+    while (GetMessage(&messages, NULL, 0, 0)) {
+        TranslateMessage(&messages);
+        DispatchMessage(&messages);
+    }
+    return 1;
+}
 
