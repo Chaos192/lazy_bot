@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <stdint.h>
 
 void enable_lua_api() {
     char bytes_to_write[] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xc3 };

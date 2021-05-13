@@ -3,6 +3,7 @@
 
 #include "game_functions.h"
 #include "utils.h"
+#include "sync_thread.h"
 
 #define WINDOW_NAME "Lazy Bot"
 
@@ -18,7 +19,8 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         case WM_COMMAND:
             switch (wParam) {
                 case JUMP:
-                    game_call_lua("Jump()", "");
+                    //game_call_lua("Jump()", "");
+                    sync();
                     break;
             }
             break;
