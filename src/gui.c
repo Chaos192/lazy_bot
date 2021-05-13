@@ -1,6 +1,8 @@
 #include <windows.h>
+#include <stdbool.h>
 
 #include "object_manager.h"
+#include "bot.h"
 
 #define START_BOT       1
 #define STOP_BOT        2
@@ -46,19 +48,19 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 		case WM_COMMAND:
                switch(wParam) {
                     case START_BOT:
-                        printf("Starting bot.\n");
+                        initialize_bot();
                         break;
                     case STOP_BOT:
-                        printf("Stopping bot.\n");
+                        bot_running = false;
                         break;
                     case PUSH_CRY_STATE:
-                        printf("Pushing cry state.\n");
+                        push_state(CRY_STATE);
                         break;
                     case PUSH_YELL_STATE:
-                        printf("Pushing yell state.\n");
+                        push_state(YELL_STATE);
                         break;
                     case POP_STATE:
-                        printf("Popping state.\n");
+                        pop_state();
                         break;
                }
                break;

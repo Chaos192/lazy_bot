@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "gui.h"
+#include "bot.h"
 
 void run() {
     AllocConsole();
@@ -12,9 +13,7 @@ void run() {
     // open gui
     CreateThread(NULL, 0, ThreadProc, (LPVOID)"Kenny Bot", 0, NULL);
 
-    while (TRUE) {
-        Sleep(100);
-    }
+    initialize_bot();
 }
 
 BOOL WINAPI DllMain(HINSTANCE inst, DWORD Reason, LPVOID Reserved) {
