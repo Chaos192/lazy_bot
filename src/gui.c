@@ -2,6 +2,7 @@
 #include <stdint.h>
 
 #include "game_functions.h"
+#include "utils.h"
 
 #define WINDOW_NAME "Lazy Bot"
 
@@ -17,8 +18,6 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         case WM_COMMAND:
             switch (wParam) {
                 case JUMP:
-                    char bytes_to_write[] = { 0xB8, 0x01, 0x00, 0x00, 0x00, 0xc3 };
-                    WriteProcessMemory(GetCurrentProcess(), (void *)0x494A50, (void*)bytes_to_write, sizeof(bytes_to_write), NULL); 
                     game_call_lua("Jump()", "");
                     break;
             }
@@ -52,7 +51,7 @@ BOOL RegisterDLLWindowClass(const char *szClassName, HINSTANCE instance_handle) 
 }
 
 uint32_t WINAPI start_gui(LPVOID injected_instance) {
-    //setup_client(); // do things like enable lua and correct click to move
+    setup_client(); // do things like enable lua and correct click to move
     MSG messages;
     RegisterDLLWindowClass("InjectedDLLWindowClass", *(HINSTANCE*)injected_instance);
     HWND prnt_hWnd = FindWindow("Window Injected Into ClassName", 
