@@ -8,11 +8,13 @@ LRESULT CALLBACK myNewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     if (uMsg == WM_USER) {
         // TODO: Understand why the fuck calling from the main thread
         // generate different opcodes.. omg, I'm so dump t-t
-        _asm {
+        //game_call_lua("Jump()", "");
+        static char* jump_string = "Jump()";
+        __asm {
             pushad
-            mov edx, 0x66be7300
-            mov ecx, 0x66be6ba0 
-            mov esi, 0x704cd0
+            mov edx, myNewWndProc 
+            mov ecx, jump_string
+            mov esi, 0x00704CD0
             call esi
             popad
         }
