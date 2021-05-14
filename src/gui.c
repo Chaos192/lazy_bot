@@ -64,7 +64,6 @@ BOOL RegisterDLLWindowClass(const char *szClassName, HINSTANCE instance_handle) 
 }
 
 uint32_t WINAPI start_gui(LPVOID injected_instance) {
-    sync();
     setup_client(); // do things like enable lua and correct click to move
     MSG messages;
     RegisterDLLWindowClass("InjectedDLLWindowClass", *(HINSTANCE*)injected_instance);

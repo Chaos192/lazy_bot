@@ -1,3 +1,5 @@
+#ifndef OBJECTS
+#define OBJECTS
 
 typedef enum {
     None          = 0x0,
@@ -25,3 +27,5 @@ typedef struct {
     object_type_t type;
     float distance_from_local_player;
 } object_t;
+
+#endif

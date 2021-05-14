@@ -4,9 +4,9 @@
 #include <stdbool.h>
 #include <math.h>
 
-//#include "object.h"
 #include "memory_manager.h"
 #include "game_functions.h"
+#include "object_manager.h"
 
 static const uint32_t OBJECT_TYPE_OFFSET = 0x14;
 static const uint32_t UNIT_HEALTH_OFFSET = 0x58;
@@ -14,15 +14,12 @@ static const uint32_t UNIT_HEALTH_OFFSET = 0x58;
 static int n_players;
 static int n_units;
 static object_t local_player;
-static object_t players[100];
+static object_t players[10];
 static object_t units[100];
 
-void go_to(object_t local_player, position_t position) {
+void go_to(object_t local_player, position_t position, click_type_t click_type) {
     uint64_t interact_guid_ptr = 0; 
-    uint32_t this_call_pointer = *(uint32_t*)0xB41414;
-    this_call_pointer = *(uint32_t*)(0x1c+this_call_pointer);
-    this_call_pointer = *(uint32_t*)(0x14+this_call_pointer);
-    game_click_to_move((void*)this_call_pointer, local_player.pointer, Move, &interact_guid_ptr, &position, 2);
+    game_click_to_move((void*)local_player.pointer, local_player.pointer, click_type, &interact_guid_ptr, &position, 2);
 }
 
 float local_player_distance_from_position(position_t position) {
@@ -92,7 +89,7 @@ int32_t __fastcall callback(void *thiscall_garbage, uint32_t filter, uint64_t gu
     }
 
     // Player names are stored differently from other units
-    if (object.type == Unit) {
+    if (object.type == Unit && object.health != 0) {
         set_unit_name_ptr(&object);
         object.distance_from_local_player = 
             local_player_distance_from_position(object.position);
@@ -154,12 +151,25 @@ void sort_units_by_distance() {
     }
 }
 
-void enumerate_visible_objects() {
+void update() {
+    // temporary, just for debugging
     if (game_get_player_guid()) {
+        static int i = 0;
         n_units   = 0;
         n_players = 0;
         game_enumerate_visible_objects(callback, 0);
         sort_units_by_distance();
-        print_object_info(units);
+
+        object_t *target = units;
+        static uint64_t previous_guid = 0;
+        game_set_target(target->guid);
+        if (local_player_distance_from_position(target->position) > 2) {
+            go_to(local_player, target->position, MoveClick);
+        } else {
+            go_to(local_player, target->position, NoneClick);
+            invoke("CastSpellByName('Attack')") > 0;
+            uint32_t object_descriptor_addr = get_object_descriptor_addr(target);
+            while (read_uint32(object_descriptor_addr + UNIT_HEALTH_OFFSET) > 0) Sleep(100);;
+        }
     }
 }

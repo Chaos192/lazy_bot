@@ -1,12 +1,17 @@
 #include <windows.h>
 #include <stdbool.h>
 
+#include "object_manager.h"
+
+extern object_t local_player;
+extern object_t units[100];
+
 bool running = false;
 
 void start() {
     if (!running) {
         printf("Starting Bot...\n");
-        running = false;
+        running = true;
     } else {
         printf("Bot already running.\n");
     }
@@ -22,8 +27,11 @@ void stop() {
 }
 
 void bot() {
-    while (running) {
-        printf("Top State");
-        Sleep(700);
+    while (true) {
+        if (running) {
+            update();
+            //go_to(local_player, units[0].position);
+        }
+        Sleep(500);
     }
 }

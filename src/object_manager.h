@@ -1,2 +1,3 @@
 #include <stdint.h>
-void enumerate_visible_objects();
+#include "object.h"
+

@@ -4,7 +4,6 @@
 
 #define CALL_LUA_FUNCTION_PTR 0x00704CD0
 
-
 void game_call_lua(const char *lua_command) {
     __asm {
         pushad
