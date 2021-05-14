@@ -7,27 +7,48 @@
 
 #define WINDOW_NAME "Lazy Bot"
 
-#define JUMP 0
-#define JUMPP 1
+#define CHAT     0
+#define JUMP     1
+#define ZOOM_IN  2
+#define ZOOM_OUT 3
+
+BOOL CALLBACK EnumChildProc(HWND hWnd, LPARAM lParam)
+{
+    HFONT hfDefault = (HFONT) GetStockObject(DEFAULT_GUI_FONT);
+    SendMessage(hWnd, WM_SETFONT, (WPARAM) hfDefault, MAKELPARAM(TRUE, 0));
+    return TRUE;
+}
 
 LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
         case WM_CREATE:
+            CreateWindowW(L"Button", L"Chat",
+                          WS_CHILD | WS_VISIBLE | WS_BORDER,
+                          5, 10, 70, 20, hwnd, (HMENU)CHAT, NULL, NULL);
             CreateWindowW(L"Button", L"Jump",
                           WS_CHILD | WS_VISIBLE | WS_BORDER,
-                          5, 10, 70, 20, hwnd, (HMENU)JUMP, NULL, NULL);
-            CreateWindowW(L"Button", L"Jump2",
+                          85, 10, 70, 20, hwnd, (HMENU)JUMP, NULL, NULL);
+            CreateWindowW(L"Button", L"Zoom In",
                           WS_CHILD | WS_VISIBLE | WS_BORDER,
-                          70, 10, 70, 20, hwnd, (HMENU)JUMPP, NULL, NULL);
+                          165, 10, 70, 20, hwnd, (HMENU)ZOOM_IN, NULL, NULL);
+            CreateWindowW(L"Button", L"Zoom Out",
+                          WS_CHILD | WS_VISIBLE | WS_BORDER,
+                          250, 10, 70, 20, hwnd, (HMENU)ZOOM_OUT, NULL, NULL);
+            EnumChildWindows(hwnd, EnumChildProc, 0);
             break;
         case WM_COMMAND:
             switch (wParam) {
-                case JUMP:
-                    invoke();
-                    //sync();
+                case CHAT:
+                    invoke("SendChatMessage(\"Kofoi tá tirando?\")");
                     break;
-                case JUMPP:
-                    game_call_lua("Jump()", "");
+                case JUMP:
+                    invoke("Jump()");
+                    break;
+                case ZOOM_IN:
+                    invoke("CameraZoomIn(25)");
+                    break;
+                case ZOOM_OUT:
+                    invoke("CameraZoomOut(25)");
                     break;
             }
             break;

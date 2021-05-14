@@ -1,7 +1,10 @@
 #include <windows.h>
+//#include "game_functions.h"
 
 WNDPROC prevWndProc;
 HWND wow_window;
+
+char *lua_function_to_exec;
 
 LRESULT CALLBACK myNewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -9,15 +12,7 @@ LRESULT CALLBACK myNewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         // TODO: Understand why the fuck calling from the main thread
         // generate different opcodes.. omg, I'm so dump t-t
         //game_call_lua("Jump()", "");
-        static char* jump_string = "Jump()";
-        __asm {
-            pushad
-            mov edx, myNewWndProc 
-            mov ecx, jump_string
-            mov esi, 0x00704CD0
-            call esi
-            popad
-        }
+        game_call_lua(lua_function_to_exec);
     }
     return CallWindowProc(prevWndProc, hwnd, uMsg, wParam, lParam);
 }
@@ -27,6 +22,7 @@ void sync() {
     prevWndProc = (WNDPROC) SetWindowLong(wow_window, GWL_WNDPROC, (LONG_PTR)&myNewWndProc);
 }
 
-void invoke() {
+void invoke(char *lua_function) {
+    lua_function_to_exec = lua_function;
     SendMessage(wow_window, WM_USER, 0, 0);
 }
