@@ -9,9 +9,6 @@ char *lua_function_to_exec;
 LRESULT CALLBACK myNewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (uMsg == WM_USER) {
-        // TODO: Understand why the fuck calling from the main thread
-        // generate different opcodes.. omg, I'm so dump t-t
-        //game_call_lua("Jump()", "");
         game_call_lua(lua_function_to_exec);
     }
     return CallWindowProc(prevWndProc, hwnd, uMsg, wParam, lParam);
