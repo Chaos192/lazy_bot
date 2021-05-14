@@ -167,9 +167,7 @@ void update() {
             go_to(local_player, target->position, MoveClick);
         } else {
             go_to(local_player, target->position, NoneClick);
-            invoke("CastSpellByName('Attack')") > 0;
-            uint32_t object_descriptor_addr = get_object_descriptor_addr(target);
-            while (read_uint32(object_descriptor_addr + UNIT_HEALTH_OFFSET) > 0) Sleep(100);;
+            //invoke("CastSpellByName('Attack')") > 0;
         }
     }
 }

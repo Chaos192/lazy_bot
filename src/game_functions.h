@@ -20,6 +20,7 @@ typedef void (__fastcall* click_to_move_ft)
      uint64_t *interact_guid_ptr, position_t *position_ptr, float precision);
 typedef void (__stdcall* set_target_ft)(uint64_t guid);
 
+00417ac0
 get_player_guid_ft game_get_player_guid = (get_player_guid_ft) 0x468550;
 enumerate_visible_objects_ft game_enumerate_visible_objects = 
     (enumerate_visible_objects_ft) 0x00468380;
