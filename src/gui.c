@@ -8,6 +8,7 @@
 #define WINDOW_NAME "Lazy Bot"
 
 #define JUMP 0
+#define JUMPP 1
 
 LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
@@ -15,12 +16,18 @@ LRESULT CALLBACK DLLWindowProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM l
             CreateWindowW(L"Button", L"Jump",
                           WS_CHILD | WS_VISIBLE | WS_BORDER,
                           5, 10, 70, 20, hwnd, (HMENU)JUMP, NULL, NULL);
+            CreateWindowW(L"Button", L"Jump2",
+                          WS_CHILD | WS_VISIBLE | WS_BORDER,
+                          70, 10, 70, 20, hwnd, (HMENU)JUMPP, NULL, NULL);
             break;
         case WM_COMMAND:
             switch (wParam) {
                 case JUMP:
-                    //game_call_lua("Jump()", "");
-                    sync();
+                    invoke();
+                    //sync();
+                    break;
+                case JUMPP:
+                    game_call_lua("Jump()", "");
                     break;
             }
             break;
@@ -53,6 +60,7 @@ BOOL RegisterDLLWindowClass(const char *szClassName, HINSTANCE instance_handle) 
 }
 
 uint32_t WINAPI start_gui(LPVOID injected_instance) {
+    sync();
     setup_client(); // do things like enable lua and correct click to move
     MSG messages;
     RegisterDLLWindowClass("InjectedDLLWindowClass", *(HINSTANCE*)injected_instance);
