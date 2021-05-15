@@ -157,17 +157,17 @@ void update() {
         static int i = 0;
         n_units   = 0;
         n_players = 0;
-        game_enumerate_visible_objects(callback, 0);
-        sort_units_by_distance();
+        game_enumerate_visible_objects(callback, 0); // TODO: discover what is making this function crash the client
+        //sort_units_by_distance();
 
-        object_t *target = units;
-        static uint64_t previous_guid = 0;
-        game_set_target(target->guid);
-        if (local_player_distance_from_position(target->position) > 2) {
-            go_to(local_player, target->position, MoveClick);
-        } else {
-            go_to(local_player, target->position, NoneClick);
-            invoke("CastSpellByName('Attack')") > 0;
-        }
+        //object_t *target = units;
+        //static uint64_t previous_guid = 0;
+        //game_set_target(target->guid);
+        //if (local_player_distance_from_position(target->position) > 2) {
+        //    go_to(local_player, target->position, MoveClick);
+        //} else {
+        //    go_to(local_player, target->position, NoneClick);
+        //    invoke("CastSpellByName('Attack')") > 0;
+        //}
     }
 }

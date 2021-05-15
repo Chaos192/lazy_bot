@@ -14,8 +14,7 @@ LRESULT CALLBACK myNewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     if (uMsg == WM_USER) {
         game_call_lua(lua_function_to_exec);
     } else if (uMsg == MELLO) {
-        // TODO: Check what in the 'update' is making some races crash the client
-        //update(); 
+        update(); 
         LRESULT result = CallWindowProc(never_change, hwnd, uMsg, wParam, lParam); // Access violation on some maps
         return result;
     }
