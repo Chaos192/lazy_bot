@@ -163,7 +163,7 @@ void update() {
         object_t *target = units;
         static uint64_t previous_guid = 0;
         game_set_target(target->guid);
-        if (local_player_distance_from_position(target->position) > 2) {
+        if (local_player_distance_from_position(target->position) > 3) {
             go_to(local_player, target->position, MoveClick);
         } else {
             go_to(local_player, target->position, NoneClick);
