@@ -167,7 +167,7 @@ void update() {
             go_to(local_player, target->position, MoveClick);
         } else {
             go_to(local_player, target->position, NoneClick);
-            //invoke("CastSpellByName('Attack')") > 0;
+            invoke("CastSpellByName('Attack')") > 0;
         }
     }
 }
