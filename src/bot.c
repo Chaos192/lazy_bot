@@ -29,8 +29,7 @@ void stop() {
 void bot() {
     while (true) {
         if (running) {
-            update();
-            //go_to(local_player, units[0].position);
+            invoke_update();
         }
         Sleep(500);
     }
