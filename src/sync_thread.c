@@ -2,6 +2,7 @@
 //#include "game_functions.h"
 
 WNDPROC prevWndProc;
+WNDPROC never_change;
 HWND wow_window;
 
 char *lua_function_to_exec;
@@ -13,8 +14,10 @@ LRESULT CALLBACK myNewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     if (uMsg == WM_USER) {
         game_call_lua(lua_function_to_exec);
     } else if (uMsg == MELLO) {
-        update();
-        return CallWindowProc(prevWndProc, hwnd, uMsg, wParam, lParam); // Access violation on some maps
+        // TODO: Check what in the 'update' is making some races crash the client
+        //update(); 
+        LRESULT result = CallWindowProc(never_change, hwnd, uMsg, wParam, lParam); // Access violation on some maps
+        return result;
     }
     return CallWindowProc(prevWndProc, hwnd, uMsg, wParam, lParam); // Access violation on some maps
 }
@@ -22,6 +25,7 @@ LRESULT CALLBACK myNewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 void sync() {
     wow_window = FindWindow(NULL, "World of Warcraft");
     prevWndProc = (WNDPROC) SetWindowLong(wow_window, GWL_WNDPROC, (LONG_PTR)&myNewWndProc);
+    never_change = prevWndProc;
 }
 
 void invoke(char *lua_function) {
